@@ -180,6 +180,14 @@ double ans(int l, int r) {
 }
 
 void solve() {
+
+    /*
+        Good question to start with segTree
+        You can use node or make two seg trees
+        make sure to avoid edge case such as i did!
+        in case my (l>r) and some part of [l,r] is in range [0,n-1] it will give WA
+    */
+
     init();
     int q;
     cin >> q;

@@ -1,0 +1,212 @@
+/*  
+*/
+
+#include<iostream>
+#include<vector>
+#include<string>
+#include<climits>
+#include<math.h>
+#include<stack>
+#include<list>
+#include<algorithm>
+#include<queue>
+#include<map>
+#include<set>
+#include <iomanip> 
+#include<utility>
+#define int int64_t
+#define vi vector<int>
+#define vii vector<pair<int,int>>
+#define vs vector<string>
+#define vc vector<char>
+#define vb vector<bool>
+#define pb push_back
+#define vvi vector<vector<int>>
+#define pii pair<int,int>
+#define mp make_pair
+#define all(x) (x).begin(), (x).end()
+#define vin(x,v) for(auto &x:v)cin>>x;
+#define vout(x,v)for(auto x:v)cout<<x<<" ";
+#define MEM(a, b) memset(a, (b), sizeof(a))
+#define loop(i, j, k) for (int i=j ; i<k ; i+=1)
+#define rloop(i, j, k) for (int i=j ; i>=k ; i-=1)
+#define rep(i, j) loop(i, 0, j)
+#define rrep(i, j) rloop(i, j, 0)
+#define MP make_pair
+#define endl "\n"
+#define INF (int)1e18
+#define EPS 1e-18
+#define PI 3.1415926535897932384626433832795
+#define MOD 1000000007
+//cout <<setprecision(15)
+#define NEED_FOR_SPEED_MOST_WANTED ios_base::sync_with_stdio(false);cin.tie(NULL)
+using namespace std;
+
+
+/*-----------------------------------D-E-B-U-G-----------------------------------------------*/
+#ifndef ONLINE_JUDGE
+#define deb(x)       \
+    cerr << #x << " "; \
+    _print(x);         \
+    cerr << endl;
+#else
+#define deb(x)
+#endif
+
+void _print(int32_t t){ cerr<<t;}
+void _print(int t) { cerr << t; }
+void _print(string t) { cerr << t; }
+void _print(char t) { cerr << t; }
+void _print(long double t) { cerr << t; }
+void _print(double t) { cerr << t; }
+void _print(unsigned long long t) { cerr << t; }
+
+template <class T, class V>
+void _print(pair<T, V> p);
+template <class T>
+void _print(vector<T> v);
+template <class T>
+void _print(set<T> v);
+template <class T, class V>
+void _print(map<T, V> v);
+template <class T>
+void _print(multiset<T> v);
+template <class T, class V>
+void _print(pair<T, V> p)
+{
+    cerr << "{";
+    _print(p.first);
+    cerr << ",";
+    _print(p.second);
+    cerr << "}";
+}
+template <class T>
+void _print(vector<T> v)
+{
+    cerr << "[ ";
+    for (T i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
+}
+template <class T>
+void _print(set<T> v)
+{
+    cerr << "[ ";
+    for (T i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
+}
+template <class T>
+void _print(multiset<T> v)
+{
+    cerr << "[ ";
+    for (T i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
+}
+template <class T, class V>
+void _print(map<T, V> v)
+{
+    cerr << "[ ";
+    for (auto i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
+}
+/*-----------------------------------D-E-B-U-G-----------------------------------------------*/
+
+vii graph[100110];
+// map<int,vii>graph;
+vi dist(100010,INF);
+
+void dij(int C){
+    queue<pair<int, int>> pq;
+
+    dist[C] = 0;
+    pq.push({0, C});
+    while (pq.size() > 0)
+    {
+        pair<int, int> alpha = pq.front();
+        pq.pop();
+        for (auto x : graph[alpha.second])
+        {
+            if (dist[x.first] > dist[alpha.second] + x.second)
+            {
+                dist[x.first] = dist[alpha.second] + x.second;
+                pq.push({dist[x.first], x.first});
+            }
+        }
+    }
+}
+
+void solve(){
+    int n,m;cin>>n>>m;
+    int k,s;cin>>k>>s;
+    vi dis[k+111];
+    vi aalu(n);
+    vin(x,aalu);
+    aalu.insert(aalu.begin(),0);
+    // deb(aalu);
+    loop(i,1,n+1){
+        int t=100010+aalu[i];
+        graph[t].push_back({i,0});
+    }
+
+    rep(i,n+5)dist[i]=INF;
+    rep(i,m){
+        int a,b;cin>>a>>b;
+        graph[a].pb({b,1});
+        graph[b].pb({a,1});
+    }
+    // deb(graph);
+    loop(i,1,k+1){
+        rep(i,n+5)dist[i]=INF;      
+        int t=100010+i;
+        dij(t);
+        // deb(t);
+        dis[i]=dist;
+        // deb(dis[i]);
+    }
+
+    loop(i,1,n+1){
+        vi ans;
+        loop(j,1,k+1){
+            ans.push_back(dis[j][i]);
+        }
+        sort(all(ans));
+        int x=0;
+        rep(i,s){
+            x+=ans[i];
+        }
+        cout<<x<<" ";
+        // cout<<"\n";
+    }
+    
+}
+
+signed main(){
+NEED_FOR_SPEED_MOST_WANTED; 
+ //#ifndef ONLINE_JUDGE
+    //FOR GETTING INPUT FROM input.txt
+    //freopen("input.txt", "r", stdin);
+    //FOR GETTING INPUT FROM input.txt	
+    //freopen("output.txt", "w", stdout);
+//	#endif
+  int t=1;
+  //cin>>t;
+  while(t--){
+   solve();
+  cout<<endl;
+  }
+}

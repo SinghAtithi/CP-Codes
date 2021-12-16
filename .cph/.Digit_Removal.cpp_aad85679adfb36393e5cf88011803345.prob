@@ -1,0 +1,1 @@
+{"name":"Local: Digit_Removal","url":"/home/ravan/Desktop/codeforces/Digit_Removal.cpp","tests":[{"id":1633111416323,"input":"5\n21 5\n8 8\n100 0\n5925 9\n434356 3","output":"0\n1\n11\n75\n5644"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/ravan/Desktop/codeforces/Digit_Removal.cpp","group":"local","local":true}

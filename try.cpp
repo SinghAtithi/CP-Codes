@@ -135,104 +135,46 @@ void _print(map<T, V> v)
     cerr << "]";
 }
 /*-----------------------------------D-E-B-U-G-----------------------------------------------*/
-// struct graph with dfs, bfs, dijikstra and prims
-struct graph
-{
-    int V;
-    vector<vector<pair<int, int>>> adj;
-    vector<bool> visited;
-    vector<int> dist;
-    vector<int> parent;
-    graph(int V)
-    {
-        this->V = V;
-        adj.resize(V);
-        visited.resize(V, false);
-        dist.resize(V, INT_MAX);
-        parent.resize(V, -1);
-    }
-    void addEdge(int u, int v, int w)
-    {
-        adj[u].push_back(make_pair(v, w));
-        adj[v].push_back(make_pair(u, w));
-    }
-    void dfs(int s)
-    {
-        visited[s] = true;
-        for (auto i : adj[s])
-        {
-            if (!visited[i.first])
-            {
-                dfs(i.first);
-            }
-        }
-    }
-    void bfs(int s)
-    {
-        queue<int> q;
-        q.push(s);
-        visited[s] = true;
-        while (!q.empty())
-        {
-            int u = q.front();
-            q.pop();
-            for (auto i : adj[u])
-            {
-                if (!visited[i.first])
-                {
-                    visited[i.first] = true;
-                    q.push(i.first);
-                    parent[i.first] = u;
-                    dist[i.first] = i.second;
-                }
-            }
-        }
-    }
-    void dijkstra(int s)
-    {
-        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-        pq.push(make_pair(0, s));
-        dist[s] = 0;
-        while (!pq.empty())
-        {
-            int u = pq.top().second;
-            pq.pop();
-            for (auto i : adj[u])
-            {
-                if (dist[i.first] > dist[u] + i.second)
-                {
-                    dist[i.first] = dist[u] + i.second;
-                    parent[i.first] = u;
-                    pq.push(make_pair(dist[i.first], i.first));
-                }
-            }
-        }
-    }
-    void prims(int s)
-    {
-        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-        pq.push(make_pair(0, s));
-        dist[s] = 0;
-        while (!pq.empty())
-        {
-            int u = pq.top().second;
-            pq.pop();
-            for (auto i : adj[u])
-            {
-                if (dist[i.first] > i.second)
-                {
-                    dist[i.first] = i.second;
-                    parent[i.first] = u;
-                    pq.push(make_pair(dist[i.first], i.first));
-                }
-            }
-        }
-    }
-};
+bool checkk(int n, vi &v){
+    int t=n/3;
+    n-=(t*3);
+    if(n==0 && v[0]>=t)return true;
+    if(n==1 && v[0]>=t && v[1]>0)return true;
+    if(n==1 && v[0]>=t-1 && v[2]>1)return true;
+    if(n==2 && v[0]>=t && v[1]>1)return true;
+    if(n==2 && v[0]>=t && v[2]>0)return true;
+    if(n==3 && v[0]>=t-1 && v[1]>=1 && v[2]>=1)return true;
+    return false;
+}
 
+bool check(vi &v, vi &vv){
+    bool ans=true;
+    for(auto &x:v){
+        if(checkk(x,vv)==false)ans=false;
+    }
+    return ans;
+}
 
 void solve(){
-    
+    int n;cin>>n;
+    vi v(n);vin(x,v);
+    sort(all(v));
+    int ans=MOD;
+    vi vv(3);
+    int t=v.back()/3;
+    t=max(t-5,(int)0);
+    for(int i=t;i<=t+10;i++){
+        rep(j,5){
+            rep(k,5){
+                vv[0]=i;
+                vv[1]=j;
+                vv[2]=k;
+                if(check(v,vv))ans=min(ans,i+j+k);
+            }
+        }
+    }
+    deb(t);
+    cout<<ans;
 }
 
 signed main(){
@@ -244,7 +186,7 @@ NEED_FOR_SPEED_MOST_WANTED;
     //freopen("output.txt", "w", stdout);
 //	#endif
   int t=1;
-  //cin>>t;
+  cin>>t;
   while(t--){
    solve();
   cout<<endl;

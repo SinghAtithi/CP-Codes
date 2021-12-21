@@ -136,32 +136,13 @@ void _print(map<T, V> v)
 }
 /*-----------------------------------D-E-B-U-G-----------------------------------------------*/
 
-vector<int> findAnagrams(string s, string p) {
-        map<char,int>wanted;
-        for(char i='a';i<='z';i++)wanted[i]=0;
-        for(auto x:p)wanted[x]++;
-        int j=0;
-        int n=s.size();
-        int m=p.size();
-        vector<int>ans;
-        map<char,int>mp;
-        for(char i='a';i<='z';i++)mp[i]=0;
 
-        for(int i=0;i<n;i++){
-            if(i<m-1)mp[s[i]]++;
-            else{
-                mp[s[i]]++;
-                if(mp==wanted)ans.push_back(i-m+1);
-                mp[s[j++]]--;
-            }
-            deb(mp);
-        }
-        return ans;
-    }
 
 void solve(){
-    string s,k;cin>>s>>k;
-    vout(x,findAnagrams(s,k));
+    char a,b,c;cin>>a>>b>>c;
+    // deb(a);deb(b);deb(c);
+    // deb(a-'0');deb(b-'0');deb(c-'0');
+    cout<<(a-'0')*(c-'0');
 }
 
 signed main(){
@@ -173,7 +154,7 @@ NEED_FOR_SPEED_MOST_WANTED;
     //freopen("output.txt", "w", stdout);
 //	#endif
   int t=1;
-  //cin>>t;
+//   cin>>t;
   while(t--){
    solve();
   cout<<endl;

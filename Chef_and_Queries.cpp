@@ -135,33 +135,115 @@ void _print(map<T, V> v)
     cerr << "]";
 }
 /*-----------------------------------D-E-B-U-G-----------------------------------------------*/
+struct Node{
+    int freq;
+    int lazy;
+};
+vector<int>arr;
+vector<Node>segTree;
+int n,q;
 
-vector<int> findAnagrams(string s, string p) {
-        map<char,int>wanted;
-        for(char i='a';i<='z';i++)wanted[i]=0;
-        for(auto x:p)wanted[x]++;
-        int j=0;
-        int n=s.size();
-        int m=p.size();
-        vector<int>ans;
-        map<char,int>mp;
-        for(char i='a';i<='z';i++)mp[i]=0;
-
-        for(int i=0;i<n;i++){
-            if(i<m-1)mp[s[i]]++;
-            else{
-                mp[s[i]]++;
-                if(mp==wanted)ans.push_back(i-m+1);
-                mp[s[j++]]--;
-            }
-            deb(mp);
-        }
-        return ans;
+void build(int v, int start, int end){
+    if(start==end){
+        segTree[v].lazy=0;
+        segTree[v].freq=0;
+        return;
     }
+    int mid=(start+end)/2;
+    build(2*v, start, mid);
+    build(2*v+1, mid+1, end);
+    // since It's a point query, we do not need to do anything here
+}
+
+Node query(int v, int l, int start, int end){
+    if(start==end && start==l){
+        return segTree[v];
+    }
+    int mid=(start+end)/2;
+    segTree[2*v].lazy=((mid-start+1)*segTree[v].lazy)/(end-start+1);
+    segTree[2*v+1].lazy=segTree[v].lazy-segTree[2*v].lazy;
+    segTree[v].lazy=0;
+    segTree[2*v].freq=(mid-start+1);
+    segTree[2*v+1].freq=(end-mid);
+    segTree[v].freq=0;
+    if(l<=mid){
+        return query(2*v, l, start, mid);
+    }
+    else{
+        return query(2*v+1, l, mid+1, end);
+    }
+}
+
+Node query(int l){
+    return query(1,l,0,n-1);
+}
+
+void update(int v, int l,int r, int start, int end,int k){
+    if(l>end || r<start)return; // no overlap
+    if(l<=start && end<=r){
+        segTree[v].lazy+=k*(end-start+1);
+        // deb(l);deb(r);deb(start);deb(end);deb(k);
+        // deb(segTree[v].lazy);
+        segTree[v].freq+=k;
+        return;
+    }
+    int mid=(start+end)/2;
+    update(2*v, l, r, start, mid, k);
+    update(2*v+1, l, r, mid+1, end, k);
+}
+
+void update(int l, int r, int k){
+    update(1,l,r,0,n-1,k);
+}
+
+
+void init(){
+    cin>>n;
+    cin>>q;
+    arr.resize(n);
+    vin(x,arr);
+    segTree.resize(4*n);
+    build(1,0,n-1);
+}
+
+int ans(int l){
+    Node node=query(l);
+    int t=0;
+    t=arr[l-1];
+    deb(arr[l-1]);
+    deb(node.lazy);
+    deb(node.freq);
+    t+=node.lazy*node.lazy;
+    t+=node.freq*(l*l);
+    t+=node.lazy*node.freq*2;
+    deb(t);
+    return t;
+}
 
 void solve(){
-    string s,k;cin>>s>>k;
-    vout(x,findAnagrams(s,k));
+    /*
+        Good Problem from CodeChef Starters,
+        I will be using SegTree with Lazy Propagation
+        You could have used BIT also.
+        (X +i -L)^2 = (i + (X-L))^2 = (i^2) + (2*i*(X-L)) + (X-L)^2 
+        The above fromula will be used, earlier i thought to use something like prefix
+        sum in seg tree but then how to add constant values, Thats why using lazy propagation
+        Type: Range Update Point Query
+    */
+   init();
+   while(q--){
+         int t;cin>>t;
+         if(t==1){
+              int l,r,k;cin>>l>>r>>k;
+              int y=(k-l);
+              update(l,r,y);
+              deb(0);
+         }
+         else{
+              int l;cin>>l;
+              cout<<ans(l)<<"\n";
+         }
+   }
 }
 
 signed main(){

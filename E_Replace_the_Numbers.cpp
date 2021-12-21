@@ -120,81 +120,48 @@ template <class T, class V> void _print(map<T, V> v) {
     cerr << "]";
 }
 /*-----------------------------------D-E-B-U-G-----------------------------------------------*/
-struct node {
-    int mini;
-    int maxi;
-};
-
-int N;
-vi arr;
-vector<node> segTree;
-
-node merge(node a, node b) {
-    return {min(a.mini, b.mini), max(a.maxi, b.maxi)};
-}
-
-
-void build(int v, int start, int end) {
-    if (start == end) {
-        segTree[v] = {arr[start], arr[start]};
-        return;
-    }
-    int mid = (start + end) / 2;
-    build(2 * v, start, mid);
-    build(2 * v + 1, mid + 1, end);
-    segTree[v] = merge(segTree[2 * v], segTree[2 * v + 1]);
-}
-
-node query(int v, int l, int r, int start, int end) {
-    if (l > end || r < start || l > r) {
-        return {INT_MAX, INT_MIN};
-    }
-    if (l <= start && r >= end) {
-        return segTree[v];
-    }
-    int mid = (start + end) / 2;
-    node left = query(2 * v, l, r, start, mid);
-    node right = query(2 * v + 1, l, r, mid + 1, end);
-    return merge(left, right);
-}
-
-node query(int l, int r) { return query(1, l, r, 0, N - 1); }
-
-void init() {
-    cin >> N;
-    arr.resize(N);
-    vin(x, arr);
-    segTree.resize(4 * N);
-    cout << fixed;
-    cout << setprecision(1);
-}
-
-double ans(int l, int r) {
-    node a = query(l, r);
-    node b = query(r + 1, N - 1);
-    node c = query(0, l - 1);
-    double ans = a.mini;
-    ans += (double(a.maxi - a.mini)) / 2;
-    ans = max(ans, double(a.mini + b.maxi));
-    ans = max(ans, double(a.mini + c.maxi));
-    return ans;
-}
 
 void solve() {
+    int n;
+    cin >> n;
+    vector<vi> graph;
+    rep(i, n) {
+        int t;
+        cin >> t;
+        if (t == 1) {
+            int x;
+            cin >> x;
+            vi temp;
+            temp.push_back(x);
+            graph.push_back(temp);
+        } else {
+            int x;
+            cin >> x;
+            vi temp;
+            temp.push_back(x);
+            cin >> x;
+            temp.push_back(x);
+            graph.push_back(temp);
 
-    /*
-        Notes
-    */
-
-    init();
-    int q;
-    cin >> q;
-    build(1, 0, N - 1);
-    while (q--) {
-        int l, r;
-        cin >> l >> r;
-        cout << ans(l, r) << "\n";
+        }
     }
+    vi ans;
+    // deb(0);
+    map<int,int>mp;
+    for(auto x:graph){
+        for(auto xx:x)mp[xx]=xx;
+    }
+    reverse(all(graph));
+    for(auto x:graph){
+        if(x.size()==1){
+            if(mp[x[0]])ans.push_back(mp[x[0]]);
+            else ans.push_back(x[0]);
+        }
+        else{
+            mp[x[0]]=mp[x[1]];
+        }
+    }
+    reverse(all(ans));vout(x,ans);
 }
 
 signed main() {
@@ -206,7 +173,7 @@ signed main() {
     // freopen("output.txt", "w", stdout);
     //	#endif
     int t = 1;
-    // cin>>t;
+    // cin >> t;
     while (t--) {
         solve();
         cout << endl;

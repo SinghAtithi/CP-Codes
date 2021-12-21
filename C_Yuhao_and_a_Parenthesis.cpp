@@ -120,81 +120,76 @@ template <class T, class V> void _print(map<T, V> v) {
     cerr << "]";
 }
 /*-----------------------------------D-E-B-U-G-----------------------------------------------*/
-struct node {
-    int mini;
-    int maxi;
-};
-
-int N;
-vi arr;
-vector<node> segTree;
-
-node merge(node a, node b) {
-    return {min(a.mini, b.mini), max(a.maxi, b.maxi)};
-}
-
-
-void build(int v, int start, int end) {
-    if (start == end) {
-        segTree[v] = {arr[start], arr[start]};
-        return;
+int r(string s) {
+    int ans = 0;
+    
+    // first check if it lies in positive half or negetive half
+    
+    for (auto x : s) {
+        if (x == '(')
+            ans++;
+        else
+            ans--;
     }
-    int mid = (start + end) / 2;
-    build(2 * v, start, mid);
-    build(2 * v + 1, mid + 1, end);
-    segTree[v] = merge(segTree[2 * v], segTree[2 * v + 1]);
-}
 
-node query(int v, int l, int r, int start, int end) {
-    if (l > end || r < start || l > r) {
-        return {INT_MAX, INT_MIN};
+    int temp=0;
+
+    // if it lies in positive half then check if it can be a part or not
+    // example ()))(((( can not be a part even though it is in positive half
+    // positive means it is in first half negetive means in second half
+
+    if(ans>=0){
+        rep(i,s.size()){
+            if(s[i]=='(')
+                temp++;
+            else
+                temp--;
+            if(temp<0)
+                return INF;
+        }
     }
-    if (l <= start && r >= end) {
-        return segTree[v];
+
+    // but for negetive part we have to check from begind
+    // remember this!! 
+    // because this gave me WA
+
+    else{
+        for(int i=s.size()-1;i>=0;i--){
+            char x=s[i];
+            if(x=='(')
+                temp++;
+            else
+                temp--;
+            if(temp>0)
+                return INF;
+        }
     }
-    int mid = (start + end) / 2;
-    node left = query(2 * v, l, r, start, mid);
-    node right = query(2 * v + 1, l, r, mid + 1, end);
-    return merge(left, right);
-}
-
-node query(int l, int r) { return query(1, l, r, 0, N - 1); }
-
-void init() {
-    cin >> N;
-    arr.resize(N);
-    vin(x, arr);
-    segTree.resize(4 * N);
-    cout << fixed;
-    cout << setprecision(1);
-}
-
-double ans(int l, int r) {
-    node a = query(l, r);
-    node b = query(r + 1, N - 1);
-    node c = query(0, l - 1);
-    double ans = a.mini;
-    ans += (double(a.maxi - a.mini)) / 2;
-    ans = max(ans, double(a.mini + b.maxi));
-    ans = max(ans, double(a.mini + c.maxi));
+    if(ans>=0 && s[0]==')')return INF;
+    if(ans<0 && s.back()=='(')return INF;
     return ans;
 }
 
 void solve() {
-
-    /*
-        Notes
-    */
-
-    init();
-    int q;
-    cin >> q;
-    build(1, 0, N - 1);
-    while (q--) {
-        int l, r;
-        cin >> l >> r;
-        cout << ans(l, r) << "\n";
+    int n;
+    cin >> n;
+    map<int, int> mp;
+    rep(i, n) {
+        string s;
+        cin >> s;
+        int temp = r(s);
+        if (temp != INF) mp[temp]++;
     }
+    int ans = 0;
+    for (auto x : mp) {
+        if (x.first < 0) {
+            ans += min(x.second, mp[-x.first]);
+        }
+    }
+    // we have to check for 0 seperately
+    // could have done in the map itself but i am lazy
+    
+    ans += mp[0] / 2;
+    cout << ans;
 }
 
 signed main() {

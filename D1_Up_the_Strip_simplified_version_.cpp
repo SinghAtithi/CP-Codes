@@ -22,6 +22,7 @@
 #include <set>
 #include <stack>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 #define int int64_t
@@ -120,81 +121,34 @@ template <class T, class V> void _print(map<T, V> v) {
     cerr << "]";
 }
 /*-----------------------------------D-E-B-U-G-----------------------------------------------*/
-struct node {
-    int mini;
-    int maxi;
-};
-
-int N;
-vi arr;
-vector<node> segTree;
-
-node merge(node a, node b) {
-    return {min(a.mini, b.mini), max(a.maxi, b.maxi)};
-}
-
-
-void build(int v, int start, int end) {
-    if (start == end) {
-        segTree[v] = {arr[start], arr[start]};
-        return;
-    }
-    int mid = (start + end) / 2;
-    build(2 * v, start, mid);
-    build(2 * v + 1, mid + 1, end);
-    segTree[v] = merge(segTree[2 * v], segTree[2 * v + 1]);
-}
-
-node query(int v, int l, int r, int start, int end) {
-    if (l > end || r < start || l > r) {
-        return {INT_MAX, INT_MIN};
-    }
-    if (l <= start && r >= end) {
-        return segTree[v];
-    }
-    int mid = (start + end) / 2;
-    node left = query(2 * v, l, r, start, mid);
-    node right = query(2 * v + 1, l, r, mid + 1, end);
-    return merge(left, right);
-}
-
-node query(int l, int r) { return query(1, l, r, 0, N - 1); }
-
-void init() {
-    cin >> N;
-    arr.resize(N);
-    vin(x, arr);
-    segTree.resize(4 * N);
-    cout << fixed;
-    cout << setprecision(1);
-}
-
-double ans(int l, int r) {
-    node a = query(l, r);
-    node b = query(r + 1, N - 1);
-    node c = query(0, l - 1);
-    double ans = a.mini;
-    ans += (double(a.maxi - a.mini)) / 2;
-    ans = max(ans, double(a.mini + b.maxi));
-    ans = max(ans, double(a.mini + c.maxi));
-    return ans;
-}
 
 void solve() {
-
-    /*
-        Notes
-    */
-
-    init();
-    int q;
-    cin >> q;
-    build(1, 0, N - 1);
-    while (q--) {
-        int l, r;
-        cin >> l >> r;
-        cout << ans(l, r) << "\n";
+    int n;
+    cin >> n;
+    int m;
+    cin >> m;
+    vector<int> dp(n + 1, 0);
+    int tot = 0;
+    for (int i = 1; i <= n+1; i++) {
+        if (i == 1)
+            dp[i] = 1, tot = 1;
+        else {
+            for (int sq = 1; sq * sq <= i; sq++) {
+                if (i % sq == 0) {
+                    // dp[i] += dp[sq];
+                    dp[i] %= m;
+                    dp[i] += dp[i / sq];
+                    dp[i] %= m;
+                }
+            }
+            dp[i] += tot;
+            dp[i] %= m;
+            tot += dp[i];
+            tot %= m;
+        }
     }
+    deb(dp);
+    cout << dp[n];
 }
 
 signed main() {

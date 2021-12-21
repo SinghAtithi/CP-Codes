@@ -47,7 +47,7 @@
 #define MP make_pair
 #define endl "\n"
 #define INF (int)1e18
-#define EPS 1e-18
+#define EPS 1e-16
 #define PI 3.1415926535897932384626433832795
 #define MOD 1000000007
 #define MODD 998244353
@@ -120,81 +120,50 @@ template <class T, class V> void _print(map<T, V> v) {
     cerr << "]";
 }
 /*-----------------------------------D-E-B-U-G-----------------------------------------------*/
+
 struct node {
-    int mini;
-    int maxi;
+    int painkiller;
+    int medikit;
+    int cost;
 };
+int n, p, q;
+vector<node> v(n);
 
-int N;
-vi arr;
-vector<node> segTree;
-
-node merge(node a, node b) {
-    return {min(a.mini, b.mini), max(a.maxi, b.maxi)};
+bool check(int a, int b) {
+    if (a == 0 || b == 0) return false;
+    int t = __gcd(a, b);
+    a /= t;
+    b /= t;
+    
+    if (a == p && b == q) return true;
+    return false;
 }
 
-
-void build(int v, int start, int end) {
-    if (start == end) {
-        segTree[v] = {arr[start], arr[start]};
-        return;
+int dp[50][510][510];
+int r(int ind, int pain, int med) {
+    
+    if (ind == n) {
+        if (check(pain, med)==true) return 0;
+        return INF;
     }
-    int mid = (start + end) / 2;
-    build(2 * v, start, mid);
-    build(2 * v + 1, mid + 1, end);
-    segTree[v] = merge(segTree[2 * v], segTree[2 * v + 1]);
-}
-
-node query(int v, int l, int r, int start, int end) {
-    if (l > end || r < start || l > r) {
-        return {INT_MAX, INT_MIN};
-    }
-    if (l <= start && r >= end) {
-        return segTree[v];
-    }
-    int mid = (start + end) / 2;
-    node left = query(2 * v, l, r, start, mid);
-    node right = query(2 * v + 1, l, r, mid + 1, end);
-    return merge(left, right);
-}
-
-node query(int l, int r) { return query(1, l, r, 0, N - 1); }
-
-void init() {
-    cin >> N;
-    arr.resize(N);
-    vin(x, arr);
-    segTree.resize(4 * N);
-    cout << fixed;
-    cout << setprecision(1);
-}
-
-double ans(int l, int r) {
-    node a = query(l, r);
-    node b = query(r + 1, N - 1);
-    node c = query(0, l - 1);
-    double ans = a.mini;
-    ans += (double(a.maxi - a.mini)) / 2;
-    ans = max(ans, double(a.mini + b.maxi));
-    ans = max(ans, double(a.mini + c.maxi));
-    return ans;
+    if (dp[ind][pain][med] != -1) return dp[ind][pain][med];
+    int x = r(ind + 1, pain, med);
+    int y = r(ind + 1, pain + v[ind].painkiller, med + v[ind].medikit) +
+            v[ind].cost;
+    return dp[ind][pain][med] = min(x, y);
 }
 
 void solve() {
-
-    /*
-        Notes
-    */
-
-    init();
-    int q;
-    cin >> q;
-    build(1, 0, N - 1);
-    while (q--) {
-        int l, r;
-        cin >> l >> r;
-        cout << ans(l, r) << "\n";
-    }
+    cin >>p>>q>>n;
+    int t = __gcd(p, q);
+    p /= t;
+    q /= t;
+    v.resize(n);
+    rep(i,50)rep(j,510)rep(k,510)dp[i][j][k]=-1;
+    rep(i, n) { cin >> v[i].painkiller >> v[i].medikit >> v[i].cost; }
+    int x=r(0,0,0);
+    if(x>=INF)cout<<-1;
+    else cout<<x;
 }
 
 signed main() {

@@ -120,81 +120,66 @@ template <class T, class V> void _print(map<T, V> v) {
     cerr << "]";
 }
 /*-----------------------------------D-E-B-U-G-----------------------------------------------*/
-struct node {
-    int mini;
-    int maxi;
-};
-
-int N;
-vi arr;
-vector<node> segTree;
-
-node merge(node a, node b) {
-    return {min(a.mini, b.mini), max(a.maxi, b.maxi)};
+int n, m;
+vector<vector<int>> arr;
+bool comp(pii a, pii b){
+    return a.second>b.second;
 }
 
-
-void build(int v, int start, int end) {
-    if (start == end) {
-        segTree[v] = {arr[start], arr[start]};
-        return;
+bool check(int k) { 
+    int count=0;
+    vector<pii>v;
+    rep(i,m){
+        rep(j,n){
+            if(arr[i][j]>=k){
+                count++;
+            }
+        }
+        v.push_back({i,count});
+        count=0;
     }
-    int mid = (start + end) / 2;
-    build(2 * v, start, mid);
-    build(2 * v + 1, mid + 1, end);
-    segTree[v] = merge(segTree[2 * v], segTree[2 * v + 1]);
-}
-
-node query(int v, int l, int r, int start, int end) {
-    if (l > end || r < start || l > r) {
-        return {INT_MAX, INT_MIN};
+    sort(all(v),comp);
+    if(v[0].second<2){
+        return false;
     }
-    if (l <= start && r >= end) {
-        return segTree[v];
+    set<int>st;
+    for(auto y:v){
+        int x=y.first;
+        for(int i=0;i<arr[x].size();i++){
+            if(arr[x][i]>=k){
+                st.insert(i);
+            }
+        }
     }
-    int mid = (start + end) / 2;
-    node left = query(2 * v, l, r, start, mid);
-    node right = query(2 * v + 1, l, r, mid + 1, end);
-    return merge(left, right);
-}
-
-node query(int l, int r) { return query(1, l, r, 0, N - 1); }
-
-void init() {
-    cin >> N;
-    arr.resize(N);
-    vin(x, arr);
-    segTree.resize(4 * N);
-    cout << fixed;
-    cout << setprecision(1);
-}
-
-double ans(int l, int r) {
-    node a = query(l, r);
-    node b = query(r + 1, N - 1);
-    node c = query(0, l - 1);
-    double ans = a.mini;
-    ans += (double(a.maxi - a.mini)) / 2;
-    ans = max(ans, double(a.mini + b.maxi));
-    ans = max(ans, double(a.mini + c.maxi));
-    return ans;
+    return st.size()>=n;
+    
 }
 
 void solve() {
 
-    /*
-        Notes
-    */
+// very good question
 
-    init();
-    int q;
-    cin >> q;
-    build(1, 0, N - 1);
-    while (q--) {
-        int l, r;
-        cin >> l >> r;
-        cout << ans(l, r) << "\n";
+    cin >> m >> n;
+    arr.clear();
+
+    rep(i, m) {
+        vi v(n);
+        vin(x, v);
+        arr.push_back(v);
     }
+    
+    int low = 0, high = MOD + MOD;
+    while (low < high) {
+        int mid = (low + high) / 2;
+        if (check(mid)) {
+            low = mid + 1;
+        } else
+            high = mid;
+    }
+    if (check(low))
+        cout << low;
+    else
+        cout << low - 1;
 }
 
 signed main() {
@@ -206,7 +191,7 @@ signed main() {
     // freopen("output.txt", "w", stdout);
     //	#endif
     int t = 1;
-    // cin>>t;
+    cin >> t;
     while (t--) {
         solve();
         cout << endl;

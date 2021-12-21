@@ -136,32 +136,39 @@ void _print(map<T, V> v)
 }
 /*-----------------------------------D-E-B-U-G-----------------------------------------------*/
 
-vector<int> findAnagrams(string s, string p) {
-        map<char,int>wanted;
-        for(char i='a';i<='z';i++)wanted[i]=0;
-        for(auto x:p)wanted[x]++;
-        int j=0;
-        int n=s.size();
-        int m=p.size();
-        vector<int>ans;
-        map<char,int>mp;
-        for(char i='a';i<='z';i++)mp[i]=0;
+map<int,vi>graph;
+vi population;
+map<int,bool>vis;
+map<int,int>mpp;
 
-        for(int i=0;i<n;i++){
-            if(i<m-1)mp[s[i]]++;
-            else{
-                mp[s[i]]++;
-                if(mp==wanted)ans.push_back(i-m+1);
-                mp[s[j++]]--;
-            }
-            deb(mp);
+void dfs(int n,int cnt){
+    vis[n]=true;
+    bool any= true;
+    for(auto x:graph[n]){
+        if(population[x]>population[n] && !vis[x]){
+            dfs(x,cnt+1);
+            any=false;
         }
-        return ans;
     }
+    if(any)mpp[n]+=cnt;
+}
+
 
 void solve(){
-    string s,k;cin>>s>>k;
-    vout(x,findAnagrams(s,k));
+    int n;cin>>n;
+    population.clear();
+    graph.clear();
+    vis.clear();
+    mpp.clear();
+    rep(i,n){
+        int x;cin>>x;
+        population.pb(x);
+    }
+    rep(i,n-1){
+        int x,y;cin>>x>>y;
+        graph[x].push_back(y);
+        graph[y].push_back(x);
+    }    
 }
 
 signed main(){
@@ -173,7 +180,7 @@ NEED_FOR_SPEED_MOST_WANTED;
     //freopen("output.txt", "w", stdout);
 //	#endif
   int t=1;
-  //cin>>t;
+  cin>>t;
   while(t--){
    solve();
   cout<<endl;

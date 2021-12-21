@@ -12,6 +12,8 @@
 */
 
 #include <math.h>
+#include <stdlib.h>
+#include <time.h>
 #include <algorithm>
 #include <climits>
 #include <iomanip>
@@ -47,6 +49,7 @@
 #define MP make_pair
 #define endl "\n"
 #define INF (int)1e18
+#define ll long long
 #define EPS 1e-18
 #define PI 3.1415926535897932384626433832795
 #define MOD 1000000007
@@ -120,80 +123,76 @@ template <class T, class V> void _print(map<T, V> v) {
     cerr << "]";
 }
 /*-----------------------------------D-E-B-U-G-----------------------------------------------*/
-struct node {
-    int mini;
-    int maxi;
-};
 
-int N;
-vi arr;
-vector<node> segTree;
-
-node merge(node a, node b) {
-    return {min(a.mini, b.mini), max(a.maxi, b.maxi)};
-}
-
-
-void build(int v, int start, int end) {
-    if (start == end) {
-        segTree[v] = {arr[start], arr[start]};
-        return;
+ll power_6(ll n) {
+    ll res = 1;
+    for (int i = 0; i < 6; i++) {
+        res *= n;
     }
-    int mid = (start + end) / 2;
-    build(2 * v, start, mid);
-    build(2 * v + 1, mid + 1, end);
-    segTree[v] = merge(segTree[2 * v], segTree[2 * v + 1]);
+
+    return res;
 }
 
-node query(int v, int l, int r, int start, int end) {
-    if (l > end || r < start || l > r) {
-        return {INT_MAX, INT_MIN};
+ 
+ 
+ll binpow(ll a, ll b) {
+    ll res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a;
+        a = a * a;
+        b >>= 1;
     }
-    if (l <= start && r >= end) {
-        return segTree[v];
+    return res;
+}
+ 
+ 
+ 
+ll bitch(ll N)
+{
+ 
+    ll cnt = 0, i = 1;
+ 
+    while ((ll)(pow(i, 6)) <= N) {
+        ++cnt;
+        ++i;
     }
-    int mid = (start + end) / 2;
-    node left = query(2 * v, l, r, start, mid);
-    node right = query(2 * v + 1, l, r, mid + 1, end);
-    return merge(left, right);
+ 
+    return cnt;
+}
+ 
+
+int harsh(int n) {
+      ll res = sqrt(n);
+  ll res2 = cbrt(n);
+  ll res3 = bitch(n);
+  // deb(res3);
+  // res3 = (res3*(res3+1))/2;
+  return res+res2-res3;
 }
 
-node query(int l, int r) { return query(1, l, r, 0, N - 1); }
-
-void init() {
-    cin >> N;
-    arr.resize(N);
-    vin(x, arr);
-    segTree.resize(4 * N);
-    cout << fixed;
-    cout << setprecision(1);
-}
-
-double ans(int l, int r) {
-    node a = query(l, r);
-    node b = query(r + 1, N - 1);
-    node c = query(0, l - 1);
-    double ans = a.mini;
-    ans += (double(a.maxi - a.mini)) / 2;
-    ans = max(ans, double(a.mini + b.maxi));
-    ans = max(ans, double(a.mini + c.maxi));
-    return ans;
+int atithi(int n) {
+            ll ans = 0;
+ 
+ 
+        ans = floor(pow(n,1/2.0))  + floor(pow(n,1/3.0)) - floor(pow(n,1/6.0));
+        
+        if(n==MOD) ans++;
+ 
+       return ans;
 }
 
 void solve() {
-
-    /*
-        Notes
-    */
-
-    init();
-    int q;
-    cin >> q;
-    build(1, 0, N - 1);
-    while (q--) {
-        int l, r;
-        cin >> l >> r;
-        cout << ans(l, r) << "\n";
+    int n;
+    srand(time(0));
+    while (true) {
+        n = rand() % 1000000;
+        if (atithi(n) != harsh(n)) {
+            cout << n << endl;
+            cout << atithi(n) << endl;
+            cout << harsh(n) << endl;
+            break;
+        }
     }
 }
 

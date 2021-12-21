@@ -1,1 +1,1 @@
-{"name":"Local: try","url":"/home/ravan/Desktop/CP/codeforces/try.cpp","tests":[{"id":1636984314011,"input":"2","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/ravan/Desktop/CP/codeforces/try.cpp","group":"local","local":true}
+{"name":"Local: try","url":"/home/ravan/Desktop/CP/codeforces/try.cpp","tests":[{"id":1636984314011,"input":"4\n1\n1337\n3\n10 8 10\n5\n1 2 3 4 5\n3\n7 77 777","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/ravan/Desktop/CP/codeforces/try.cpp","group":"local","local":true}

@@ -3,4 +3,5 @@ build
 *.html
 !tools/*.html
 tools/ac-library.zip
+/.cph
 __pycache__

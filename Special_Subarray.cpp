@@ -135,33 +135,34 @@ void _print(map<T, V> v)
     cerr << "]";
 }
 /*-----------------------------------D-E-B-U-G-----------------------------------------------*/
+int ans=0;
 
-vector<int> findAnagrams(string s, string p) {
-        map<char,int>wanted;
-        for(char i='a';i<='z';i++)wanted[i]=0;
-        for(auto x:p)wanted[x]++;
-        int j=0;
-        int n=s.size();
-        int m=p.size();
-        vector<int>ans;
-        map<char,int>mp;
-        for(char i='a';i<='z';i++)mp[i]=0;
-
-        for(int i=0;i<n;i++){
-            if(i<m-1)mp[s[i]]++;
-            else{
-                mp[s[i]]++;
-                if(mp==wanted)ans.push_back(i-m+1);
-                mp[s[j++]]--;
+void r(vi &v, int k){
+    int temp=0;
+    int cnt=0;
+    for(auto x:v){
+        if(x<=k)temp|=x,cnt++;
+        else{
+            if(temp==k){
+                ans=max(ans,cnt);
             }
-            deb(mp);
+            temp=0;
+            cnt=0;
         }
-        return ans;
     }
+}
+
 
 void solve(){
-    string s,k;cin>>s>>k;
-    vout(x,findAnagrams(s,k));
+    int n;cin>>n;
+    vi v(n);
+    vin(x,v);
+    v.push_back(INF/100);
+    rep(i,31){
+        int k=pow(2,i)-1;
+        r(v,k);
+    }
+    cout<<ans;
 }
 
 signed main(){
